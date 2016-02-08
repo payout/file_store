@@ -19,7 +19,7 @@ file_id = FileStore.upload(data)
 file_id = FileStore.upload do
   file.read(1000) # Calls until nil is returned
 end
-  => "bucket/NNN/NNN/NNN/NNN.dat"
+  => "bucket/NNN/NNN/NNN/NNN/file_name.ext"
 
 url = FileStore.download_url(file_id, ttl: 60)
   => "https://awspath"
