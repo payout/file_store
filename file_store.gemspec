@@ -13,4 +13,7 @@ Gem::Specification.new do |s|
   s.authors     = ["Robert Honer", "Kayvon Ghaffari"]
   s.email       = ['robert@payout.com', 'kayvon@payout.com']
   s.files       = Dir['lib/**/*.rb']
+
+  s.add_dependency 'aws-sdk', '~> 2.2.14'
+  s.add_development_dependency 'rspec'
 end
