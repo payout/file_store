@@ -25,7 +25,11 @@ module FileStore
               data = yield
             end
           else
-            _s3_object(file_id).put(body: data)
+            _s3_object(file_id).put(
+              body: data,
+              server_side_encryption: 'AES256',
+              acl: 'private'
+            )
           end
 
           file_id
