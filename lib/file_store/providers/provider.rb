@@ -14,8 +14,10 @@ module FileStore
         @options = opts
       end
 
-      def upload(*args)
-        file_id = upload!(*args)
+      def upload(prefix, file_name, data = nil)
+        ext = Utils.generate_ext_if_needed(file_name)
+        file_path = generate_unique_path(prefix) + "/#{file_name}" << ext
+        file_id = upload!(file_path, data)
         "#{_provider_name}://#{file_id}"
       end
 

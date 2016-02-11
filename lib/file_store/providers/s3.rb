@@ -27,13 +27,10 @@ module FileStore
       ##
       # Send data directly to S3 either as a String / IO object, or as a
       # multi-part upload
-      def upload!(prefix, file_name, data = nil)
+      def upload!(file_path, data = nil)
         _synchronize do
-          ext = Utils.generate_ext_if_needed(file_name)
-          file_id = generate_unique_path(prefix) + "/#{file_name}" << ext
-          _s3_object(file_id).put(DEFAULT_S3_OPTIONS.merge(body: data))
-
-          "#{_bucket_name}/#{file_id}"
+          _s3_object(file_path).put(DEFAULT_S3_OPTIONS.merge(body: data))
+          "#{_bucket_name}/#{file_path}"
         end
       end
 
