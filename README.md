@@ -19,7 +19,7 @@ end
 ##
 # Data can be sent either as a String or IO object
 file_id = FileStore.upload(:app_attachment, 'file_name.txt', data)
-  => "bucket/app_attachment/NNN/NNN/NNN/NNN/file_name.txt"
+  => "s3://bucket/app_attachment/NNN/NNN/NNN/NNN/file_name.txt"
 
 url = FileStore.download_url(file_id, ttl: 60)
   => "https://awspath"
