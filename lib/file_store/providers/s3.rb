@@ -51,7 +51,7 @@ module FileStore
       end
 
       def path_exists?(path)
-        _s3_bucket.objects(prefix: 'path').one?
+        _s3_bucket.objects(prefix: path).one?
       end
 
       def required_configs
