@@ -16,13 +16,9 @@ end
 ## Usage
 
 ```ruby
-file_id = FileStore.upload(data, :app_attachment)
-  => "bucket/app_attachment/NNN/NNN/NNN/NNN/file_name.ext"
-
-file_id = FileStore.upload do
-  file.read(1000) # Calls until nil is returned
-end
-  => "bucket/app_attachment/NNN/NNN/NNN/NNN/file_name.ext"
+data =
+file_id = FileStore.upload(:app_attachment, 'file_name.txt', data)
+  => "bucket/app_attachment/NNN/NNN/NNN/NNN/file_name.txt"
 
 url = FileStore.download_url(file_id, ttl: 60)
   => "https://awspath"

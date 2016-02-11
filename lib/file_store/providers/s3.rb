@@ -5,6 +5,10 @@ module FileStore
     class S3 < Provider
       REQUIRED_CONFIGS = [:aws_access_key, :aws_access_secret, :aws_s3_bucket,
         :aws_region].freeze
+      DEFAULT_S3_OPTIONS = {
+        server_side_encryption: 'AES256',
+        acl: 'private'
+      }.freeze
 
       def initialize(opts = {})
         @_synchronizer = Mutex.new
@@ -14,24 +18,11 @@ module FileStore
       ##
       # Send data directly to S3 either as a String / IO object, or as a
       # multi-part upload
-      def upload(key, file_name, data)
+      def upload(prefix, file_name, data = nil)
         _synchronize do
-          file_id = generate_unique_path(key) + "/#{file_name}.dat"
-
-          if block_given?
-            loop do
-              break unless data
-              _s3_object.multi_part_upload(data)
-              data = yield
-            end
-          else
-            _s3_object(file_id).put(
-              body: data,
-              server_side_encryption: 'AES256',
-              acl: 'private'
-            )
-          end
-
+          ext = File.extname(file_name).length > 0 ? '' : '.dat'
+          file_id = generate_unique_path(prefix) + "/#{file_name}" << ext
+          _s3_object(file_id).put(DEFAULT_S3_OPTIONS.merge(body: data))
           file_id
         end
       end
@@ -41,6 +32,8 @@ module FileStore
       # Pass in a ttl as an option for the link expiration time in seconds.
       def download_url(file_id, opts = {})
         options = { expires_in: opts[:ttl] || 600 }
+
+        fail "object: #{file_id} doesn't exist" unless _object_exists?(file_id)
         _s3_object(file_id).presigned_url(:get, options)
       end
 
@@ -57,8 +50,8 @@ module FileStore
         nil
       end
 
-      def object_exists?(path)
-        _s3_object(path).exists?
+      def path_exists?(path)
+        _s3_bucket.objects(prefix: 'path').one?
       end
 
       def required_configs
@@ -81,6 +74,10 @@ module FileStore
 
       def _s3_object(path = "")
         _s3_bucket.object(path)
+      end
+
+      def _object_exists?(path)
+        _s3_object(path).exists?
       end
 
       def _synchronize(&block)

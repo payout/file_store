@@ -12,6 +12,7 @@ module FileStore
 
     def method_missing(meth, *args, &block)
       if provider.respond_to?(meth)
+        meth = provider.mocked? ? "mock_#{meth}" : meth
         provider.public_send(meth, *args, &block)
       else
         super
