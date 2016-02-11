@@ -9,8 +9,8 @@ module FileStore
         {
           aws_access_key: ENV['AWS_ACCESS_KEY'],
           aws_access_secret: ENV['AWS_ACCESS_SECRET'],
-          aws_s3_bucket: ENV['AWS_S3_BUCKET'] || 'file-store-tests',
-          aws_region: ENV['AWS_REGION'] || 'us-east-1'
+          aws_s3_bucket: 'file-store-tests',
+          aws_region: 'us-east-1'
         }
       end
 
@@ -20,61 +20,74 @@ module FileStore
         context 'with missing config values' do
           context 'without aws_access_key' do
 
-            let(:opts) {
+            let(:opts) do
               {
                 aws_access_secret: 'secret',
                 aws_s3_bucket: 'bucket',
                 aws_region: 'us-east-1'
               }
-            }
+            end
 
             it 'should raise an error' do
-               expect { subject}.to raise_error 'missing field: aws_access_key'
+               expect { subject}.to raise_error 'missing fields: aws_access_key'
             end
-          end
+          end # without aws_access_key
 
           context 'without aws_access_secret' do
-            let(:opts) {
+            let(:opts) do
               {
                 aws_access_key: 'abc123',
                 aws_s3_bucket: 'bucket',
                 aws_region: 'us-east-1'
               }
-            }
+            end
 
             it 'should raise an error' do
-               expect { subject}.to raise_error 'missing field: aws_access_secret'
+               expect { subject}.to raise_error 'missing fields: aws_access_secret'
             end
-          end
+          end # without aws_access_secret
 
           context 'without aws_s3_bucket' do
-            let(:opts) {
+            let(:opts) do
               {
                 aws_access_key: 'abc123',
                 aws_access_secret: 'secret',
                 aws_region: 'us-east-1'
               }
-            }
+            end
 
             it 'should raise an error' do
-               expect { subject}.to raise_error 'missing field: aws_s3_bucket'
+               expect { subject}.to raise_error 'missing fields: aws_s3_bucket'
             end
-          end
+          end # without aws_s3_bucket
 
           context 'without aws_region' do
-            let(:opts) {
+            let(:opts) do
               {
                 aws_access_key: 'abc123',
                 aws_access_secret: 'secret',
                 aws_s3_bucket: 'bucket'
               }
-            }
+            end
 
             it 'should raise an error' do
-               expect { subject}.to raise_error 'missing field: aws_region'
+               expect { subject}.to raise_error 'missing fields: aws_region'
             end
-          end
-        end
+          end # without aws_region
+
+          context 'with multiple missing configs' do
+            let(:opts) do
+              {
+                aws_access_secret: 'secret',
+                aws_s3_bucket: 'bucket'
+              }
+            end
+
+            it 'should raise an error' do
+               expect { subject}.to raise_error 'missing fields: aws_access_key, aws_region'
+            end
+          end # with multiple missing configs
+        end # with missing config values
 
         context 'with config values' do
           let(:opts) { s3_test_opts }
@@ -92,11 +105,11 @@ module FileStore
           let(:file_name) { 'data.txt' }
           let(:data) { File.open(path).read }
 
-          it { is_expected.to match(/\Atest-files\/(\d{3}\/){4}data.txt\z/) }
+          it { is_expected.to match(/\As3:\/\/file-store-tests\/test-files\/(\d{3}\/){4}data.txt\z/) }
 
           context 'without filename extension' do
             let(:file_name) { 'data' }
-            it { is_expected.to match(/\Atest-files\/(\d{3}\/){4}data.dat\z/) }
+            it { is_expected.to match(/\As3:\/\/file-store-tests\/test-files\/(\d{3}\/){4}data.dat\z/) }
           end
         end # with string upload
 
@@ -104,11 +117,11 @@ module FileStore
           let(:file_name) { 'data.txt' }
           let(:data) { File.open(path) }
 
-          it { is_expected.to match(/\Atest-files\/(\d{3}\/){4}data.txt\z/) }
+          it { is_expected.to match(/\As3:\/\/file-store-tests\/test-files\/(\d{3}\/){4}data.txt\z/) }
 
           context 'without filename extension' do
             let(:file_name) { 'data' }
-            it { is_expected.to match(/\Atest-files\/(\d{3}\/){4}data.dat\z/) }
+            it { is_expected.to match(/\As3:\/\/file-store-tests\/test-files\/(\d{3}\/){4}data.dat\z/) }
           end
         end # with file upload
       end # #upload
@@ -132,7 +145,7 @@ module FileStore
             expect(s3_file_hash).to eq orig_file_hash
           end
 
-          context 'with ttl=10' do
+          context 'with ttl=1' do
             let(:download_opts) { {ttl: 1} }
 
             it 'should expire the download link after the ttl' do
@@ -144,11 +157,27 @@ module FileStore
           end
         end # with object existing
 
-        context 'with object not existing' do
-          let(:file_id) { 'some/bad/file/id' }
+        context 'with invalid provider' do
+          let(:file_id) { 'rackspace://a-different-bucket/some/file/id' }
 
           it 'should raise an error' do
-            expect { subject }.to raise_error "object: #{file_id} doesn't exist"
+            expect { subject }.to raise_error "invalid provider: rackspace"
+          end
+        end
+
+        context 'with invalid bucket' do
+          let(:file_id) { 's3://a-different-bucket/some/file/id' }
+
+          it 'should raise an error' do
+            expect { subject }.to raise_error "invalid bucket: a-different-bucket"
+          end
+        end
+
+        context 'with object not existing' do
+          let(:file_id) { 's3://file-store-tests/some/bad/file/id' }
+
+          it 'should raise an error' do
+            expect { subject }.to raise_error "object: some/bad/file/id doesn't exist"
           end
         end
       end # #download_url

@@ -30,7 +30,7 @@ module FileStore
       it { is_expected.to be_a Providers::S3 }
     end # #provider
 
-    describe '#method_missing' do
+    describe '#upload' do
       subject { instance.upload('', '', '') }
 
       let(:provider) { instance.provider }
@@ -57,6 +57,6 @@ module FileStore
           subject
         end
       end # with mocked file-store
-    end # #method_missing
+    end # #upload
   end # Instance
 end # FileStore

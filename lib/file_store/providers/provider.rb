@@ -14,12 +14,17 @@ module FileStore
         @options = opts
       end
 
-      def upload(prefix, file_name, data = nil)
-        fail NotImplementedError
+      def upload(*args)
+        file_id = upload!(*args)
+        "#{_provider_name}://#{file_id}"
       end
 
       def download_url(file_id, opts = {})
-        fail NotImplementedError
+        # Extract the provider from the file_id. i.e. For S3: s3://file/id/path
+        # Validate that the current provider matches the file_id's provider
+        extracted_file_id = file_id.gsub(/\A(.*):\/\//, '')
+        fail "invalid provider: #{$1}" unless $1 == _provider_name
+        download_url!(extracted_file_id, opts)
       end
 
       def mock!
@@ -40,6 +45,14 @@ module FileStore
       end
 
       protected
+
+      def upload!(prefix, file_name, data = nil)
+        fail NotImplementedError
+      end
+
+      def download_url!(file_id, opts = {})
+        fail NotImplementedError
+      end
 
       def generate_unique_path(prefix)
         20.times do
@@ -64,6 +77,10 @@ module FileStore
       # Will create a random path of four 3-digit numbers i.e. /123/456/789/321
       def _generate_random_path
         4.times.map { '/%03d' %  SecureRandom.random_number(1000) }.join
+      end
+
+      def _provider_name
+        self.class.name.split('::').last.downcase
       end
     end # Provider
   end # Providers

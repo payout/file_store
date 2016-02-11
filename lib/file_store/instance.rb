@@ -10,6 +10,12 @@ module FileStore
       @__provider ||= Providers::S3.new(config.to_h)
     end
 
+    private
+
+    def respond_to_missing?(meth)
+      provider.respond_to?(meth) || super
+    end
+
     def method_missing(meth, *args, &block)
       if provider.respond_to?(meth)
         meth = provider.mocked? ? "mock_#{meth}" : meth

@@ -22,29 +22,32 @@ module FileStore
         @_s3_bucket = _s3_interface.bucket(_bucket_name)
       end
 
+      protected
+
       ##
       # Send data directly to S3 either as a String / IO object, or as a
       # multi-part upload
-      def upload(prefix, file_name, data = nil)
+      def upload!(prefix, file_name, data = nil)
         _synchronize do
           ext = Utils.generate_ext_if_needed(file_name)
           file_id = generate_unique_path(prefix) + "/#{file_name}" << ext
           _s3_object(file_id).put(DEFAULT_S3_OPTIONS.merge(body: data))
-          file_id
+
+          "#{_bucket_name}/#{file_id}"
         end
       end
 
       ##
       # Generate a download url for the object on S3 referenced by the file_id.
       # Pass in a ttl as an option for the link expiration time in seconds.
-      def download_url(file_id, opts = {})
+      def download_url!(file_id, opts = {})
         options = { expires_in: opts[:ttl] || 600 }
-
+        bucket_name, file_id = _extract_bucket_name(file_id)
+        fail "invalid bucket: #{bucket_name}" unless bucket_name == _bucket_name
         fail "object: #{file_id} doesn't exist" unless _object_exists?(file_id)
+
         _s3_object(file_id).presigned_url(:get, options)
       end
-
-      protected
 
       def path_exists?(path)
         _s3_bucket.objects(prefix: path).one?
@@ -55,6 +58,11 @@ module FileStore
       end
 
       private
+
+      def _extract_bucket_name(file_id)
+        split_file_id = file_id.split('/')
+        [split_file_id.shift, split_file_id.join('/')]
+      end
 
       def _s3_interface
         @_s3_interface
