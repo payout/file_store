@@ -16,7 +16,8 @@ end
 ## Usage
 
 ```ruby
-data =
+##
+# Data can be sent either as a String or IO object
 file_id = FileStore.upload(:app_attachment, 'file_name.txt', data)
   => "bucket/app_attachment/NNN/NNN/NNN/NNN/file_name.txt"
 
