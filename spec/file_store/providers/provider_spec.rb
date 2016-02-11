@@ -37,7 +37,7 @@ module FileStore
         subject { provider.mock_download_url(file_id) }
         let(:file_id) { 'test/123/345/123/345/file_name.txt' }
 
-        it { is_expected.to eq("http://downloadurl.com/#{file_id}") }
+        it { is_expected.to eq("http://mocked_download_url.com/#{file_id}") }
       end # #mock_download_url
     end # Provider
   end # Providers

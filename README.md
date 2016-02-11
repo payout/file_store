@@ -22,4 +22,11 @@ file_id = FileStore.upload(:app_attachment, 'file_name.txt', data)
 
 url = FileStore.download_url(file_id, ttl: 60)
   => "https://awspath"
+
+##
+# For testing, FileStore can be mocked. No requests will be made to AWS S3
+FileStore.mock!
+file_id = FileStore.upload(:app_attachment, 'file_name.txt', data)
+url = FileStore.download_url(file_id, ttl: 60)
 ```
+

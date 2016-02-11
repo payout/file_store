@@ -35,7 +35,7 @@ module FileStore
       end
 
       def mock_download_url(file_id, opts = {})
-        "http://downloadurl.com/#{file_id}"
+        "http://mocked_download_url.com/#{file_id}"
       end
 
       protected
