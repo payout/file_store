@@ -7,10 +7,10 @@ module FileStore
       let(:opts) { {} }
       let(:s3_test_opts) do
         {
-          aws_access_key: 'AKIAICPLBKGEUCH7HSXA' || ENV['AWS_ACCESS_KEY'],
-          aws_access_secret: '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' || ENV['AWS_ACCESS_SECRET'],
-          aws_s3_bucket: 'file-store-tests' || ENV['AWS_S3_BUCKET'],
-          aws_region: 'us-east-1' || ENV['AWS_REGION']
+          aws_access_key: ENV['AWS_ACCESS_KEY'],
+          aws_access_secret: ENV['AWS_ACCESS_SECRET'],
+          aws_s3_bucket: ENV['AWS_S3_BUCKET'] || 'file-store-tests',
+          aws_region: ENV['AWS_REGION'] || 'us-east-1'
         }
       end
 
