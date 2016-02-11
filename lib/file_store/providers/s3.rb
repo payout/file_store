@@ -6,13 +6,20 @@ module FileStore
       REQUIRED_CONFIGS = [:aws_access_key, :aws_access_secret, :aws_s3_bucket,
         :aws_region].freeze
       DEFAULT_S3_OPTIONS = {
-        server_side_encryption: 'AES256',
-        acl: 'private'
+        server_side_encryption: 'AES256'.freeze,
+        acl: 'private'.freeze
       }.freeze
 
       def initialize(opts = {})
-        @_synchronizer = Mutex.new
         super
+
+        @_synchronizer = Mutex.new
+        @_s3_interface = ::Aws::S3::Resource.new(
+          access_key_id: options[:aws_access_key],
+          secret_access_key: options[:aws_access_secret],
+          region: options[:aws_region]
+        )
+        @_s3_bucket = _s3_interface.bucket(_bucket_name)
       end
 
       ##
@@ -20,7 +27,7 @@ module FileStore
       # multi-part upload
       def upload(prefix, file_name, data = nil)
         _synchronize do
-          ext = File.extname(file_name).length > 0 ? '' : '.dat'
+          ext = Utils.generate_ext_if_needed(file_name)
           file_id = generate_unique_path(prefix) + "/#{file_name}" << ext
           _s3_object(file_id).put(DEFAULT_S3_OPTIONS.merge(body: data))
           file_id
@@ -38,17 +45,6 @@ module FileStore
       end
 
       protected
-
-      def connect
-        @_s3_interface = ::Aws::S3::Resource.new(
-          access_key_id: options[:aws_access_key],
-          secret_access_key: options[:aws_access_secret],
-          region: options[:aws_region]
-        )
-        @_s3_bucket = _s3_interface.bucket(_bucket_name)
-
-        nil
-      end
 
       def path_exists?(path)
         _s3_bucket.objects(prefix: path).one?

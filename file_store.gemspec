@@ -10,8 +10,8 @@ Gem::Specification.new do |s|
   s.license     = 'MIT'
   s.summary     = ""
   s.description = s.summary
-  s.authors     = ["Robert Honer", "Kayvon Ghaffari"]
-  s.email       = ['robert@payout.com', 'kayvon@payout.com']
+  s.authors     = ["Kayvon Ghaffari", "Robert Honer"]
+  s.email       = ['kayvon@payout.com', 'robert@payout.com']
   s.files       = Dir['lib/**/*.rb']
 
   s.add_dependency 'aws-sdk', '~> 2.2.14'
