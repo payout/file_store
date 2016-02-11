@@ -48,6 +48,15 @@ module FileStore
         expect(provider).to receive(:upload).with('', '', '').once
         subject
       end
+
+      context 'with mocked file-store' do
+        before { instance.mock! }
+
+        it 'should send the mocked method to the provider' do
+          expect(provider).to receive(:mock_upload).with('', '', '').once
+          subject
+        end
+      end # with mocked file-store
     end # #method_missing
   end # Instance
 end # FileStore
