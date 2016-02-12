@@ -18,14 +18,14 @@ module FileStore
 
     describe '#provider' do
       subject { instance.provider }
-      before {
+      before do
         instance.config { |c|
           c.aws_access_key = 'abc123'
           c.aws_access_secret = 'secret'
           c.aws_s3_bucket = 'bucket'
           c.aws_region = 'us-east-1'
         }
-      }
+      end
 
       it { is_expected.to be_a Providers::S3 }
     end # #provider
@@ -35,14 +35,14 @@ module FileStore
 
       let(:provider) { instance.provider }
 
-      before {
+      before do
         instance.config { |c|
           c.aws_access_key = 'abc123'
           c.aws_access_secret = 'secret'
           c.aws_s3_bucket = 'bucket'
           c.aws_region = 'us-east-1'
         }
-      }
+      end
 
       it 'should send the method to the provider' do
         expect(provider).to receive(:upload).with('', '', '').once

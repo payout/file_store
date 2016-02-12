@@ -58,10 +58,10 @@ module FileStore
       subject { config.to_h }
 
       context 'with config values' do
-        before {
+        before do
           config.aws_access_key = "abc123"
           config.aws_access_secret = "secret"
-        }
+        end
 
         it 'should return a hash of the config values' do
           is_expected.to eq(aws_access_key: 'abc123', aws_access_secret: 'secret')
