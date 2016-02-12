@@ -1,3 +1,5 @@
+[![Gem Version](https://badge.fury.io/rb/file_store.svg)](https://badge.fury.io/rb/file_store) [![Build Status](https://travis-ci.org/payout/file_store.svg?branch=master)](https://travis-ci.org/payout/file_store) [![Code Climate](https://codeclimate.com/github/payout/file_store/badges/gpa.svg)](https://codeclimate.com/github/payout/file_store) [![Test Coverage](https://codeclimate.com/github/payout/file_store/badges/coverage.svg)](https://codeclimate.com/github/payout/file_store/coverage)
+
 # FileStore Gem
 
 ## Configuration
