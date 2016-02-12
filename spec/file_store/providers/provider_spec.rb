@@ -12,7 +12,6 @@ module FileStore
 
           protected
 
-          def connect; end
           def required_configs; []; end
           def upload!(file_path, data); file_path; end
           def download_url!(file_id, opts); end

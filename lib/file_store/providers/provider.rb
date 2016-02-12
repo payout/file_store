@@ -15,8 +15,8 @@ module FileStore
       end
 
       def upload(prefix, file_name, data = nil)
-        ext = Utils.generate_ext_if_needed(file_name)
-        file_path = generate_unique_path(prefix) + "/#{file_name}" << ext
+        ext = _generate_ext_if_needed(file_name)
+        file_path = generate_unique_path(prefix) + "/#{file_name}#{ext}"
         file_id = upload!(file_path, data)
         "#{_provider_name}://#{file_id}"
       end
@@ -38,8 +38,8 @@ module FileStore
       end
 
       def mock_upload(prefix, file_name, data = nil)
-        ext = Utils.generate_ext_if_needed(file_name)
-        prefix + _generate_random_path << "/#{file_name}" << ext
+        ext = _generate_ext_if_needed(file_name)
+        prefix + _generate_random_path + "/#{file_name}#{ext}"
       end
 
       def mock_download_url(file_id, opts = {})
@@ -83,6 +83,10 @@ module FileStore
 
       def _provider_name
         self.class.name.split('::').last.downcase
+      end
+
+      def _generate_ext_if_needed(file_name)
+        File.extname(file_name).length > 0 ? '' : '.dat'
       end
     end # Provider
   end # Providers
