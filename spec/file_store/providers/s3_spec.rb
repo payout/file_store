@@ -149,6 +149,7 @@ module FileStore
             let(:download_opts) { {ttl: 1} }
 
             it 'should expire the download link after the ttl' do
+              download_url # prime the download_url
               sleep(1.1)
               expect {
                 s3_file
