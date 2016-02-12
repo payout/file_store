@@ -149,7 +149,7 @@ module FileStore
             let(:download_opts) { {ttl: 1} }
 
             it 'should expire the download link after the ttl' do
-              sleep(1)
+              sleep(1.1)
               expect {
                 s3_file
               }.to raise_error OpenURI::HTTPError, '403 Forbidden'
