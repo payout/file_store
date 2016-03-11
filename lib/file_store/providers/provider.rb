@@ -39,11 +39,12 @@ module FileStore
 
       def mock_upload(prefix, file_name, data = nil)
         ext = _generate_ext_if_needed(file_name)
-        prefix + "/000/000/000/000/#{file_name}#{ext}"
+        "mock://#{prefix}/000/000/000/000/#{file_name}#{ext}"
       end
 
       def mock_download_url(file_id, opts = {})
-        "http://mocked_download_url.com/#{file_id}"
+        extracted_file_id = file_id.gsub(/\A(.*):\/\//, '')
+        "http://mocked_download_url.com/#{extracted_file_id}"
       end
 
       protected
