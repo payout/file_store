@@ -83,14 +83,20 @@ module FileStore
         let(:file_name) { 'file_name.txt' }
         let(:data) { 'dummydata' }
 
-        it { is_expected.to match(/\Atest\/(\d{3}\/){4}file_name.txt\z/) }
+        it 'should create a file_id' do
+          is_expected.to match(/\Amock:\/\/test\/(\d{3}\/){4}file_name.txt\z/)
+        end
       end # #mock_upload
 
       describe '#mock_download_url' do
         subject { provider.mock_download_url(file_id) }
-        let(:file_id) { 'test/123/345/123/345/file_name.txt' }
+        let(:file_id) { 'mock://test/123/345/123/345/file_name.txt' }
 
-        it { is_expected.to eq("http://mocked_download_url.com/#{file_id}") }
+        it 'should create a download url' do
+          is_expected.to eq(
+            "http://mocked_download_url.com/test/123/345/123/345/file_name.txt"
+          )
+        end
       end # #mock_download_url
     end # Provider
   end # Providers
